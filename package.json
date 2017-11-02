@@ -10,8 +10,8 @@
   },
   "scripts": {
     "postinstall": "curl -s https://raw.githubusercontent.com/reactorcore/pomander/master/bin/install | bash",
-    "start": "node ./web/basic-server.js",
-    "start:es6": "babel-node ./web/basic-server.js",
+    "start": "nodemon ./web/basic-server.js",
+    "start:es6": "babel-node ./web/basic-server.js live-server",
     "test": "mocha test",
     "test:es6": "mocha --compilers js:babel-register test",
     "lint": "eslint ./"
@@ -19,6 +19,8 @@
   "dependencies": {
     "bluebird": "^3.3.4",
     "cron": "^1.1.0",
+    "live-server": "^1.2.0",
+    "nodemon": "^1.12.1",
     "request": "^2.70.0",
     "underscore": "^1.8.3"
   },

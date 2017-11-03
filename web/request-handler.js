@@ -50,22 +50,54 @@ exports.handleRequest = function (req, res) {
       res.writeHead(status, helpers.headers);
       var urlWanted = body.substring((body.indexOf('url=') + 4), body.length);
       
+      archive.downloadUrls(urlWanted);
+
+      // archive.readListOfUrls(function(thing) { console.log('DATA = ', thing); console.log('DATA TYPE = ', typeof thing); } );
+      
+      // archive.readListOfUrls(function(data) {console.log('DATA', data); } );
+
+      //archive.isUrlInList();
+      // archive.isUrlInList('www.example2.com', function (data) { console.log('DATA IN LIST = ', data); });
+      // archive.addUrlToList('www.example123.com', (err) => { console.log('YOU MESSED UP WRITING TO THE SITELIST!... maybe', err); });
+      //archive.isUrlArchived('www.example1.com', function(answer) { console.log('TRUE TEST =', answer); });
       
 
-      // archive.readListOfUrls(function(thing) { console.log('DATA == ', thing); console.log('DATA TYPE == ', typeof thing); } );
+
+      // archive.isUrlArchived(urlWanted, function(boolean) {
+      //   console.log('Boolean Check', boolean);
+      //   if (boolean ) {
+      //     fs.readFile('./archives/sites/' + urlWanted, 'utf8', function (err, data) {
+      //       if (err) {
+      //         console.log('ERROR = ', err);
+      //       }
+      //       // console.log('DATA RECIEVED = ', data);
+      //       // console.log('TYPE OF DATA RECIEVED = ', typeof data);
+      //       status = 200;
+      //       res.writeHead(status, helpers.headers);
+      //       res.end(data);
+      //     });
+      //     console.log('We have the html data');
+      //   } else {
+      //     console.log('We do not have the html data');
+      //     fs.readFile('./web/public/loading.html', 'utf8', function (err, data) {
+      //       if (err) {
+      //         console.log('ERROR = ', err);
+      //       }
+      //       // console.log('DATA RECIEVED = ', data);
+      //       // console.log('TYPE OF DATA RECIEVED = ', typeof data);
+      //       status = 200;
+      //       res.writeHead(status, helpers.headers);
+      //       res.end(data);
+      //     });
+      //     console.log('We do not have the html data');
+      //   }
+      // });
       
-      //archive.readListOfUrls(function(thing) {   });
-
-      archive.isUrlInList();
+      
 
 
 
-
-
-
-
-
-      res.end(urlWanted);
+      // res.end(body);
     });   
   }
 

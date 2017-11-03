@@ -1,6 +1,10 @@
 var fs = require('fs');
 var path = require('path');
 var _ = require('underscore');
+var $ = require('jquery');
+var ajax = require('ajax');
+var request = require('request');
+var http = require('http');
 
 
 /*
@@ -27,38 +31,122 @@ exports.initialize = function(pathsObj) {
 // modularize your code. Keep it clean!
 
 exports.readListOfUrls = function(callback) {
-  // fs.readFile('./archives/sites.txt', 'utf8', function (err, data) {
-  //   if (err) { console.log('FILE READ ERROR =', err); }
-  //   return callback(data);
-  // });
-  fs.read('./archives/sites.txt', 'utf8', function (err, data) {
-    if (err) { console.log('ERROR', error); }
-    return callback(data);
+  fs.readFile('./archives/sites.txt', 'utf8', function (err, data) {
+    if (err) { 
+      console.log('ERROR', err); 
+    } else {
+      callback(data);
+    }
+  });
+};
+
+
+
+exports.isUrlInList = function(url, callback) {
+  exports.readListOfUrls(function (info) {
+    var infoArr = info.split('\n');
+    //console.log('inforARR ', infoArr);
+    var answer = infoArr.includes(url);  
+    callback(answer);
   });
 };
 
 
 
 
-exports.isUrlInList = function(url, callback) {
-  
-  
-//   var rawSiteListData;
-//   var cb = function (item) { test = rawSiteListData; console.log ('rawSiteListData = ', rawSiteListData); }; 
-//   exports.readListOfUrls(cb);
-
-// //////////////////////////////////
-//   var rawSiteListData = exports.readListOfUrls(function (item) { return item; });
-//   console.log('rawSiteListData =', rawSiteListData);  
-// /////////////////////////////////
-  
-};
-
 exports.addUrlToList = function(url, callback) {
+  exports.isUrlInList(url, function (data) {
+    if (data === false) {
+      var dataInput = '\\n'; 
+      dataInput.concat(url); 
+      //console.log('URL TEST = ', dataInput);
+      fs.appendFile('./archives/sites.txt', url, 'utf8', callback);
+    }
+  });
+
 };
 
 exports.isUrlArchived = function(url, callback) {
+  exports.isUrlInList(url, function (data) {
+    if (data === true) {
+      //search archive folder for file with same name
+      fs.readFile('./archives/sites/' + url, 'utf8', function (err, data) {
+        if (err) {
+          //console.log('ISURLARCHIVED ERROR =', err)
+          callback(false);
+        } else {
+          //console.log('isUrlArchived DATA = ', data);
+          callback(true);
+        }
+      });
+    } else {
+      exports.addUrlToList(url);
+      callback(false);
+    }
+  });  
+
+
 };
 
-exports.downloadUrls = function(urls) {
+
+
+exports.downloadUrls = function(url) {
+  //assume url is single
+  //isURLarchived, pass in the the callback
+  // the callback if true, does nothing
+  // if false it creates a file and downloads the info through a get request
+  console.log('into downloads');
+  exports.isUrlArchived(url, function (boolean) {
+    console.log('entering the download URL =', url);
+    if (boolean === false) {
+      request('www.google.com', function(error, response, body) {
+        console.log('ERROR =', error);
+        console.log('response =', response);
+        console.log('BODY =', body);
+        // filePath = './archives/sites/' + url;
+        // // console.log('DATA from UrlArchived', data);
+        // fs.writeFile(data, filePath, (err) => { if (err) { throw err; } }); 
+      });
+      var options = {
+        host: url 
+      };
+      http.request(options, function(response) {
+        var str = '';
+        response.on('data', function (chunk) {
+          str += chunk;
+        });
+        response.on('end', function() {
+          console.log(str);
+          response.end(str);
+        });
+        
+      });
+    }
+  });
 };
+
+
+
+
+
+
+
+// exports.downloadUrls = function(urls) {
+//   exports.isUrlArchived(urls, function(boolean) {
+//     if (boolean === true) {
+//       console.log('SHOW IT!!!!');
+//     }
+//     if (boolean === false) {
+//       console.log('NEED TO DOWNLOAD IT');
+//       //
+//       //cron
+//     }
+//   });
+// };
+
+
+
+
+
+
+
